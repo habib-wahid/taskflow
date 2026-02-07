@@ -1,0 +1,5 @@
+rootProject.name = 'taskflow'
+include ':project-service'
+include ':task-service'
+include ':auth-service'
+include ':gateway-service'
