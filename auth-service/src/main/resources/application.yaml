@@ -1,6 +1,137 @@
-
 server:
   port: 8081
+  servlet:
+    context-path: /api/auth
+
 spring:
   application:
     name: auth-service
+
+  # Database Configuration
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/tf_auth_db}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: ${SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+
+  # Flyway Migration
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+
+  # Email Configuration
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:habib11wahid@gmail.com}
+    password: ${MAIL_PASSWORD:afsfsfsfadf}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+  # OAuth2 Configuration
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:not-configured}
+            client-secret: ${GOOGLE_CLIENT_SECRET:not-configured}
+            scope: email, profile
+            redirect-uri: "{baseUrl}/oauth/google/callback"
+          github:
+            client-id: ${GITHUB_CLIENT_ID:not-configured}
+            client-secret: ${GITHUB_CLIENT_SECRET:not-configured}
+            scope: user:email, read:user
+            redirect-uri: "{baseUrl}/oauth/github/callback"
+          microsoft:
+            client-id: ${MICROSOFT_CLIENT_ID:not-configured}
+            client-secret: ${MICROSOFT_CLIENT_SECRET:not-configured}
+            scope: openid, email, profile
+            redirect-uri: "{baseUrl}/oauth/microsoft/callback"
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+        provider:
+          microsoft:
+            authorization-uri: https://login.microsoftonline.com/common/oauth2/v2.0/authorize
+            token-uri: https://login.microsoftonline.com/common/oauth2/v2.0/token
+            user-info-uri: https://graph.microsoft.com/oidc/userinfo
+            user-name-attribute: sub
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:your-256-bit-secret-key-here-must-be-at-least-32-characters-long-for-hs256}
+  access-token-expiry: ${JWT_ACCESS_TOKEN_EXPIRY:900000}  # 15 minutes
+  refresh-token-expiry: ${JWT_REFRESH_TOKEN_EXPIRY:604800000}  # 7 days
+  issuer: taskflow-auth-service
+
+# Token Expiration Settings
+token:
+  email-verification-expiry: ${EMAIL_VERIFICATION_EXPIRY:86400000}  # 24 hours
+  password-reset-expiry: ${PASSWORD_RESET_EXPIRY:3600000}  # 1 hour
+
+# Application Settings
+app:
+  frontend-url: ${FRONTEND_URL:http://localhost:3000}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: "*"
+    allow-credentials: true
+
+# Security Settings
+security:
+  password:
+    bcrypt-strength: 12
+    min-length: 8
+  login:
+    max-attempts: 5
+    lockout-duration: 900000  # 15 minutes
+  rate-limit:
+    requests-per-window: 100
+    window-duration: 900000  # 15 minutes
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.example.auth_service: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.SQL: ${SHOW_SQL:WARN}
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized

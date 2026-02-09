@@ -22,7 +22,7 @@ public class GatewayServiceApplication {
     public RouterFunction<ServerResponse> getProjectServiceRoutes() {
         return route("project-service")
                 .GET("/hello",  http())
-                .before(uri("http://localhost:8082/hello"))
+                .before(uri("http://localhost:8082"))
                 .build();
     }
 

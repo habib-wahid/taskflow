@@ -11,3 +11,249 @@ Accept: application/json
 
 ###
 GET http://localhost:8082/hello
+
+### ============================================
+### AUTH SERVICE API ENDPOINTS
+### Base URL: http://localhost:8081/api/auth
+### ============================================
+
+### Variables
+@authBaseUrl = http://localhost:8081/api/auth
+@accessToken = YOUR_ACCESS_TOKEN_HERE
+@refreshToken = YOUR_REFRESH_TOKEN_HERE
+
+### -------------------------------------------
+### 1. Register a new user
+### POST /register
+### -------------------------------------------
+POST {{authBaseUrl}}/register
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "SecurePass123!",
+  "firstName": "John",
+  "lastName": "Doe"
+}
+
+### -------------------------------------------
+### 2. Login
+### POST /login
+### -------------------------------------------
+POST {{authBaseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "SecurePass123!"
+}
+
+### -------------------------------------------
+### 3. Refresh Token
+### POST /refresh
+### -------------------------------------------
+POST {{authBaseUrl}}/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### -------------------------------------------
+### 4. Logout
+### POST /logout
+### -------------------------------------------
+POST {{authBaseUrl}}/logout
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### -------------------------------------------
+### 5. Get Current User Profile
+### GET /me
+### -------------------------------------------
+GET {{authBaseUrl}}/me
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 6. Update User Profile
+### PUT /me
+### -------------------------------------------
+PUT {{authBaseUrl}}/me
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "firstName": "Johnny",
+  "lastName": "Doe",
+  "avatarUrl": "https://example.com/avatar.png",
+  "preferences": {
+    "theme": "dark",
+    "notifications": true
+  }
+}
+
+### -------------------------------------------
+### 7. Forgot Password
+### POST /forgot-password
+### -------------------------------------------
+POST {{authBaseUrl}}/forgot-password
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com"
+}
+
+### -------------------------------------------
+### 8. Reset Password
+### POST /reset-password
+### -------------------------------------------
+POST {{authBaseUrl}}/reset-password
+Content-Type: application/json
+
+{
+  "token": "YOUR_RESET_TOKEN_HERE",
+  "newPassword": "NewSecurePass456!"
+}
+
+### -------------------------------------------
+### 9. Verify Email
+### POST /verify-email
+### -------------------------------------------
+POST {{authBaseUrl}}/verify-email
+Content-Type: application/json
+
+{
+  "token": "YOUR_VERIFICATION_TOKEN_HERE"
+}
+
+### -------------------------------------------
+### 10. Resend Verification Email
+### POST /resend-verification
+### -------------------------------------------
+POST {{authBaseUrl}}/resend-verification
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 11. OAuth - Initiate Google Login
+### GET /oauth/google
+### -------------------------------------------
+GET {{authBaseUrl}}/oauth/google
+
+### -------------------------------------------
+### 12. OAuth - Initiate GitHub Login
+### GET /oauth/github
+### -------------------------------------------
+GET {{authBaseUrl}}/oauth/github
+
+### -------------------------------------------
+### 13. OAuth - Initiate Microsoft Login
+### GET /oauth/microsoft
+### -------------------------------------------
+GET {{authBaseUrl}}/oauth/microsoft
+
+### ============================================
+### ROLE MANAGEMENT API ENDPOINTS
+### (Requires ADMIN or SUPER_ADMIN role)
+### ============================================
+
+### Variables for role management
+@userId = YOUR_USER_ID_HERE
+
+### -------------------------------------------
+### 14. Get All Roles
+### GET /roles (Admin/Super Admin only)
+### -------------------------------------------
+GET {{authBaseUrl}}/roles
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 15. Get Role by Name
+### GET /roles/{name} (Admin/Super Admin only)
+### -------------------------------------------
+GET {{authBaseUrl}}/roles/USER
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 16. Create a New Role
+### POST /roles (Super Admin only)
+### -------------------------------------------
+POST {{authBaseUrl}}/roles
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "MODERATOR",
+  "description": "Moderator with limited admin capabilities"
+}
+
+### -------------------------------------------
+### 17. Update a Role
+### PUT /roles/{roleId} (Super Admin only)
+### -------------------------------------------
+PUT {{authBaseUrl}}/roles/YOUR_ROLE_ID_HERE
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "description": "Updated role description"
+}
+
+### -------------------------------------------
+### 18. Delete a Role
+### DELETE /roles/{roleId} (Super Admin only)
+### -------------------------------------------
+DELETE {{authBaseUrl}}/roles/YOUR_ROLE_ID_HERE
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 19. Assign Role to User
+### POST /roles/users/{userId}/assign (Admin/Super Admin only)
+### -------------------------------------------
+POST {{authBaseUrl}}/roles/users/{{userId}}/assign
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "roleName": "ADMIN"
+}
+
+### -------------------------------------------
+### 20. Remove Role from User
+### POST /roles/users/{userId}/remove (Admin/Super Admin only)
+### -------------------------------------------
+POST {{authBaseUrl}}/roles/users/{{userId}}/remove
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "roleName": "ADMIN"
+}
+
+### -------------------------------------------
+### 21. Set All Roles for User
+### PUT /roles/users/{userId} (Admin/Super Admin only)
+### -------------------------------------------
+PUT {{authBaseUrl}}/roles/users/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "roles": ["USER", "ADMIN"]
+}
+
+### -------------------------------------------
+### 22. Get User's Roles
+### GET /roles/users/{userId} (Admin/Super Admin only)
+### -------------------------------------------
+GET {{authBaseUrl}}/roles/users/{{userId}}
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### Health Check
+### -------------------------------------------
+GET {{authBaseUrl}}/actuator/health
+

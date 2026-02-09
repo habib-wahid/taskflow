@@ -1,0 +1,72 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /api/auth
+
+spring:
+  application:
+    name: auth-service
+
+  # H2 Database for testing
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+
+  # Disable Flyway for tests
+  flyway:
+    enabled: false
+
+  # Mock email configuration
+  mail:
+    host: localhost
+    port: 1025
+
+# JWT Configuration
+jwt:
+  secret: test-secret-key-for-unit-testing-purposes-only-minimum-256-bits
+  access-token-expiry: 900000
+  refresh-token-expiry: 604800000
+  issuer: taskflow-auth-service-test
+
+# Token Expiration
+token:
+  email-verification-expiry: 86400000
+  password-reset-expiry: 3600000
+
+# Application Settings
+app:
+  frontend-url: http://localhost:3000
+  cors:
+    allowed-origins: http://localhost:3000
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: "*"
+    allow-credentials: true
+
+# Security Settings
+security:
+  password:
+    bcrypt-strength: 4
+    min-length: 8
+  login:
+    max-attempts: 5
+    lockout-duration: 900000
+  rate-limit:
+    requests-per-window: 100
+    window-duration: 900000
+
+logging:
+  level:
+    root: WARN
+    com.example.auth_service: DEBUG
