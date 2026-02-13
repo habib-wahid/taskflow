@@ -85,7 +85,7 @@ spring:
 
 # JWT Configuration
 jwt:
-  secret: ${JWT_SECRET:your-256-bit-secret-key-here-must-be-at-least-32-characters-long-for-hs256}
+  secret: ${JWT_SECRET:bXlTZWNyZXRLZXlGb3JKd3RUb2tlbkdlbmVyYXRpb25BbmRWYWxpZGF0aW9uMTIzNDU2Nzg5MDEyMzQ1Njc4OTA=}
   access-token-expiry: ${JWT_ACCESS_TOKEN_EXPIRY:900000}  # 15 minutes
   refresh-token-expiry: ${JWT_REFRESH_TOKEN_EXPIRY:604800000}  # 7 days
   issuer: taskflow-auth-service

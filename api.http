@@ -18,8 +18,8 @@ GET http://localhost:8082/hello
 ### ============================================
 
 ### Variables
-@authBaseUrl = http://localhost:8081/api/auth
-@accessToken = YOUR_ACCESS_TOKEN_HERE
+@authBaseUrl = http://localhost:8080/api/auth
+@accessToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkNDIxMzk5OC1mZjY5LTQ2YzktYWVhZC0wODJmMTc3NzU4OGMiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiVVNFUiJdLCJpc3MiOiJ0YXNrZmxvdy1hdXRoLXNlcnZpY2UiLCJpYXQiOjE3NzA5MDIxMjcsImV4cCI6MTc3MDkwMzAyN30.YS2w_408MK2ImhIMy10h891bkjbQVWzhqcSidVv4jxhYwzUQrgaKmsuB0ip1TA1ix5wN_6vsY6XBVkku2gE5MQ
 @refreshToken = YOUR_REFRESH_TOKEN_HERE
 
 ### -------------------------------------------
@@ -40,7 +40,7 @@ Content-Type: application/json
 ### 2. Login
 ### POST /login
 ### -------------------------------------------
-POST {{authBaseUrl}}/login
+POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
@@ -48,12 +48,224 @@ Content-Type: application/json
   "password": "SecurePass123!"
 }
 
+
+### ============================================
+### PROJECT SERVICE API ENDPOINTS
+### Base URL: http://localhost:8080/api
+### ============================================
+
+### Variables for Project Service
+@projectBaseUrl = http://localhost:8080/api
+@workspaceId = YOUR_WORKSPACE_ID_HERE
+@projectId = YOUR_PROJECT_ID_HERE
+@memberId = YOUR_MEMBER_ID_HERE
+
+### ============================================
+### WORKSPACE APIs
+### ============================================
+
+### -------------------------------------------
+### 1. Create Workspace
+### POST /api/workspaces
+### -------------------------------------------
+POST {{projectBaseUrl}}/workspaces
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Engineering",
+  "description": "Engineering workspace for development teams",
+  "slug": "engineering"
+}
+
+### -------------------------------------------
+### 2. List User Workspaces
+### GET /api/workspaces
+### -------------------------------------------
+GET {{projectBaseUrl}}/workspaces
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 3. Get Workspace Details
+### GET /api/workspaces/{id}
+### -------------------------------------------
+GET {{projectBaseUrl}}/workspaces/{{workspaceId}}
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 4. Update Workspace
+### PUT /api/workspaces/{id}
+### Permission: OWNER or ADMIN
+### -------------------------------------------
+PUT {{projectBaseUrl}}/workspaces/{{workspaceId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Engineering Team",
+  "description": "Updated engineering workspace description",
+  "slug": "engineering-team"
+}
+
+### -------------------------------------------
+### 5. Delete Workspace (Soft Delete)
+### DELETE /api/workspaces/{id}
+### Permission: OWNER only
+### -------------------------------------------
+DELETE {{projectBaseUrl}}/workspaces/{{workspaceId}}
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 6. List Workspace Members
+### GET /api/workspaces/{id}/members
+### Permission: Any member
+### -------------------------------------------
+GET {{projectBaseUrl}}/workspaces/{{workspaceId}}/members
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 7. Add Workspace Member
+### POST /api/workspaces/{id}/members
+### Permission: OWNER or ADMIN
+### -------------------------------------------
+POST {{projectBaseUrl}}/workspaces/{{workspaceId}}/members
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "userId": "550e8400-e29b-41d4-a716-446655440000",
+  "role": "MEMBER"
+}
+
+### -------------------------------------------
+### 8. Remove Workspace Member
+### DELETE /api/workspaces/{id}/members/{userId}
+### Permission: OWNER or ADMIN
+### -------------------------------------------
+DELETE {{projectBaseUrl}}/workspaces/{{workspaceId}}/members/{{memberId}}
+Authorization: Bearer {{accessToken}}
+
+### ============================================
+### PROJECT APIs
+### ============================================
+
+### -------------------------------------------
+### 9. Create Project
+### POST /api/projects
+### Permission: Workspace MEMBER+
+### -------------------------------------------
+POST {{projectBaseUrl}}/projects
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "workspaceId": "{{workspaceId}}",
+  "name": "Payment Integration",
+  "description": "Integrate Stripe payment gateway",
+  "key": "PAY",
+  "startDate": "2026-02-01",
+  "endDate": "2026-04-01",
+  "budget": 10000
+}
+
+### -------------------------------------------
+### 10. List User Projects
+### GET /api/projects
+### Optional: ?workspaceId=<uuid>
+### -------------------------------------------
+GET {{projectBaseUrl}}/projects
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 11. List User Projects (filtered by workspace)
+### GET /api/projects?workspaceId=<uuid>
+### -------------------------------------------
+GET {{projectBaseUrl}}/projects?workspaceId={{workspaceId}}
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 12. Get Project Details
+### GET /api/projects/{id}
+### -------------------------------------------
+GET {{projectBaseUrl}}/projects/{{projectId}}
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 13. Update Project
+### PUT /api/projects/{id}
+### Permission: OWNER or ADMIN
+### -------------------------------------------
+PUT {{projectBaseUrl}}/projects/{{projectId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Payment Integration v2",
+  "description": "Updated: Integrate Stripe and PayPal",
+  "status": "ACTIVE",
+  "budget": 15000
+}
+
+### -------------------------------------------
+### 14. Archive Project
+### PATCH /api/projects/{id}/archive
+### Permission: OWNER or ADMIN
+### -------------------------------------------
+PATCH {{projectBaseUrl}}/projects/{{projectId}}/archive
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 15. Get Project Analytics
+### GET /api/projects/{id}/analytics
+### Permission: Any member
+### -------------------------------------------
+GET {{projectBaseUrl}}/projects/{{projectId}}/analytics
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 16. List Project Members
+### GET /api/projects/{id}/members
+### Permission: Any member
+### -------------------------------------------
+GET {{projectBaseUrl}}/projects/{{projectId}}/members
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### 17. Add Project Member
+### POST /api/projects/{id}/members
+### Permission: OWNER or ADMIN
+### Note: User must be workspace member first
+### -------------------------------------------
+POST {{projectBaseUrl}}/projects/{{projectId}}/members
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "userId": "550e8400-e29b-41d4-a716-446655440000",
+  "role": "MEMBER"
+}
+
+### -------------------------------------------
+### 18. Remove Project Member
+### DELETE /api/projects/{id}/members/{userId}
+### Permission: OWNER or ADMIN
+### -------------------------------------------
+DELETE {{projectBaseUrl}}/projects/{{projectId}}/members/{{memberId}}
+Authorization: Bearer {{accessToken}}
+
+### -------------------------------------------
+### Project Service Health Check
+### -------------------------------------------
+GET {{projectBaseUrl}}/health
+
+
 ### -------------------------------------------
 ### 3. Refresh Token
 ### POST /refresh
 ### -------------------------------------------
 POST {{authBaseUrl}}/refresh
 Content-Type: application/json
+
 
 {
   "refreshToken": "{{refreshToken}}"
